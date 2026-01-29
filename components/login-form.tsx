@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { createClient } from "@/lib/client";
 import { cn } from "@/lib/utils";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 import { useState } from "react";
 
 export function LoginForm({

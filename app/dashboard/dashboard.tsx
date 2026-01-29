@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoutButton } from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,22 +12,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import { DashboardTabs } from "./nav-tabs";
-import { LogoutButton } from "@/components/logout-button";
 
 export default function DashboardPage() {
-
-     const pathname = usePathname();
-      const router = useRouter();
-    
-      const value = pathname.startsWith("/analytics")
-        ? "analytics"
-        : "dashboard";
-    
-
   return (
     <div className="p-6 space-y-6">
       <header className="flex items-center justify-between">
@@ -38,12 +26,12 @@ export default function DashboardPage() {
           <span className="text-sm text-muted-foreground">
             Welcome, Himanshu
           </span>
-          <LogoutButton/>
+          <LogoutButton />
         </div>
       </header>
 
       {/* Tabs */}
-        <DashboardTabs/>
+      <DashboardTabs />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

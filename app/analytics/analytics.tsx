@@ -1,27 +1,17 @@
 "use client";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LogoutButton } from "@/components/logout-button";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-
-import {
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
 } from "recharts";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import { DashboardTabs } from "../dashboard/nav-tabs";
-import { LogoutButton } from "@/components/logout-button";
 
 const monthlyData = [
   { month: "Jan", total: 0 },
@@ -48,16 +38,8 @@ const yearlyData = [
 
 export default function AnalyticsPage() {
 
-   const pathname = usePathname();
-  const router = useRouter();
-
-  const value = pathname.startsWith("/analytics")
-    ? "analytics"
-    : "dashboard";
-
   return (
     <div className="p-6 space-y-6">
-
       <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">FinanceTracker</h1>
 
@@ -65,12 +47,12 @@ export default function AnalyticsPage() {
           <span className="text-sm text-muted-foreground">
             Welcome, Himanshu
           </span>
-          <LogoutButton/>
+          <LogoutButton />
         </div>
       </header>
 
       {/* Tabs */}
-      <DashboardTabs/>
+      <DashboardTabs />
 
       {/* Monthly Expenses */}
       <Card>
