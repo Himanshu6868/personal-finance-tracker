@@ -12,9 +12,34 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { createClient } from "@/lib/client";
+import { useEffect, useState } from "react";
 import { DashboardTabs } from "./nav-tabs";
 
+interface User {
+  user_metadata: {
+    full_name: string;
+  };
+}
+
 export default function DashboardPage() {
+  const [user, setUser] = useState<User>();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const supabase = createClient();
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      setUser(user);
+    };
+
+    getUser();
+  }, []);
+  console.log("user name", user);
+
   return (
     <div className="p-6 space-y-6">
       <header className="flex items-center justify-between">
@@ -23,9 +48,7 @@ export default function DashboardPage() {
         </h1>
 
         <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground">
-            Welcome, Himanshu
-          </span>
+          Hey, {user?.user_metadata?.full_name}!
           <LogoutButton />
         </div>
       </header>
