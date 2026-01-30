@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { createClient } from "@/lib/client";
+import { createClient } from "@/utils/supabase/client";
 import { cn } from "@/lib/utils";
 // import { redirect } from "next/navigation";
 import { useState } from "react";

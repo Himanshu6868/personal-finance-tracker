@@ -1,25 +1,34 @@
-import { createClient } from "@/lib/server";
+"use server";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 
-export async function GET() {
-  const supabase = await createClient();
+export async function FetchExpenses(): Promise<Event[]> {
+  const supabase = createClient();
 
-  const { data, error } = await supabase
+  const {
+    data: { user },
+    error: userError,
+  } = await (await supabase).auth.getUser();
+
+  if (userError || !user) throw new Error("User not logged in");
+
+  const { data, error } = await (await supabase)
     .from("expenses")
-    .select("id, amount, description, expense_date, categories(name)")
+    .select("*")
     .order("expense_date", { ascending: false })
     .limit(10);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    throw new Error("Error fetching events: " + error.message);
   }
 
-  return NextResponse.json(data);
+  return data || [];
 }
 
-export async function POST(req: Request) {
+export async function AddExpense(fromData: FormData): Promise<void> {
   const supabase = await createClient();
-  const body = await req.json();
+  const body = Object.fromEntries(fromData);
 
   const { amount, category_id, description } = body;
 
@@ -31,8 +40,8 @@ export async function POST(req: Request) {
   });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    throw new Error("Error creating registration: " + error.message);
   }
 
-  return NextResponse.json({ success: true });
+  redirect("/dashboard");
 }

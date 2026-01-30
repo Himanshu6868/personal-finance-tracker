@@ -12,151 +12,156 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { createClient } from "@/lib/client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DashboardTabs } from "./nav-tabs";
 
-interface User {
-  user_metadata: {
-    full_name: string;
-  };
+interface Expense {
+  id: string;
+  amount: number;
+  description: string;
+  expense_date: string;
+  categories?: { name: string };
 }
 
-export default function DashboardPage() {
-  const [user, setUser] = useState<User>();
+export default function DashboardUI({
+  user,
+  initialExpenses,
+  initialBudget,
+}: {
+  user: any;
+  initialExpenses: Expense[];
+  initialBudget: number;
+}) {
+  const [expenses, setExpenses] = useState(initialExpenses);
+  const [budget, setBudget] = useState(initialBudget);
 
-  useEffect(() => {
-    const getUser = async () => {
-      const supabase = createClient();
+  const [amount, setAmount] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [description, setDescription] = useState("");
+  const [budgetInput, setBudgetInput] = useState("");
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  const totalSpent = expenses.reduce((s, e) => s + e.amount, 0);
+  const remaining = budget - totalSpent;
 
-      setUser(user);
-    };
+  // ---------- ADD EXPENSE ----------
+  const addExpense = async () => {
+    if (!amount || !categoryId) return;
 
-    getUser();
-  }, []);
-  console.log("user name", user);
+    await fetch("/api/expenses", {
+      method: "POST",
+      body: JSON.stringify({
+        amount: Number(amount),
+        category_id: categoryId,
+        description,
+      }),
+    });
+
+    const res = await fetch("/api/expenses");
+    setExpenses(await res.json());
+
+    setAmount("");
+    setDescription("");
+  };
+
+  // ---------- UPDATE BUDGET ----------
+  const updateBudget = async () => {
+    await fetch("/api/budget", {
+      method: "POST",
+      body: JSON.stringify({
+        budget_amount: Number(budgetInput),
+      }),
+    });
+
+    const res = await fetch("/api/budget");
+    const data = await res.json();
+    setBudget(data?.budget_amount || 0);
+
+    setBudgetInput("");
+  };
 
   return (
     <div className="p-6 space-y-6">
       <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold flex items-center gap-2">
-          FinanceTracker
-        </h1>
+        <h1 className="text-xl font-semibold">FinanceTracker</h1>
 
         <div className="flex items-center gap-4">
-          Hey, {user?.user_metadata?.full_name}!
+          Hey, {user?.user_metadata?.full_name}
           <LogoutButton />
         </div>
       </header>
 
-      {/* Tabs */}
       <DashboardTabs />
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SummaryCard
-          title="Monthly Budget"
-          value="$25000.00"
-          valueClass="text-foreground"
-        />
-        <SummaryCard
-          title="Total Expenses"
-          value="$0.00"
-          valueClass="text-red-500"
-        />
-        <SummaryCard
-          title="Remaining"
-          value="$25000.00"
-          valueClass="text-green-500"
-        />
+        <SummaryCard title="Monthly Budget" value={`$${budget}`} />
+        <SummaryCard title="Total Expenses" value={`$${totalSpent}`} valueClass="text-red-500" />
+        <SummaryCard title="Remaining" value={`$${remaining}`} valueClass="text-green-500" />
       </div>
 
-      {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Add Expense */}
-        <Card className="lg:col-span-1">
+        <Card>
           <CardHeader>
             <CardTitle>Add Expense</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Record a new expense
-            </p>
           </CardHeader>
 
           <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium">Amount</label>
-              <Input placeholder="0.00" type="number" />
-            </div>
+            <Input
+              placeholder="Amount"
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
 
-            <div>
-              <label className="text-sm font-medium">Category</label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="food">Food</SelectItem>
-                  <SelectItem value="petrol">Petrol</SelectItem>
-                  <SelectItem value="misc">Miscellaneous</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <Select onValueChange={setCategoryId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="food-id">Food</SelectItem>
+                <SelectItem value="petrol-id">Petrol</SelectItem>
+              </SelectContent>
+            </Select>
 
-            <div>
-              <label className="text-sm font-medium">Description</label>
-              <Input placeholder="What did you buy?" />
-            </div>
+            <Input
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
 
-            <Button className="w-full">+ Add Expense</Button>
+            <Button onClick={addExpense}>Add Expense</Button>
 
             <Separator />
 
-            <div className="flex gap-2 items-end">
-              <div className="flex-1">
-                <label className="text-sm font-medium">
-                  Update Monthly Budget
-                </label>
-                <Input placeholder="25000" />
-              </div>
-              <Button variant="outline">Update</Button>
-            </div>
+            <Input
+              placeholder="Monthly Budget"
+              value={budgetInput}
+              onChange={(e) => setBudgetInput(e.target.value)}
+            />
+            <Button variant="outline" onClick={updateBudget}>
+              Update Budget
+            </Button>
           </CardContent>
         </Card>
 
-        {/* Recent Expenses */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Recent Expenses</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Your latest transactions
-            </p>
           </CardHeader>
 
-          <CardContent className="flex items-center justify-center h-[240px]">
-            <p className="text-sm text-muted-foreground">
-              No expenses yet. Add your first expense!
-            </p>
+          <CardContent>
+            {expenses.length === 0 ? (
+              <p>No expenses yet</p>
+            ) : (
+              expenses.map((e) => (
+                <div key={e.id} className="flex justify-between py-2">
+                  <span>{e.categories?.name} — {e.description}</span>
+                  <span>${e.amount}</span>
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
       </div>
-
-      {/* Category Breakdown */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Expense by Category</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            See where your money goes
-          </p>
-        </CardHeader>
-
-        <CardContent className="flex items-center justify-center h-[200px]">
-          <p className="text-sm text-muted-foreground">No category data yet</p>
-        </CardContent>
-      </Card>
     </div>
   );
 }
@@ -173,9 +178,7 @@ function SummaryCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {title}
-        </CardTitle>
+        <CardTitle className="text-sm text-muted-foreground">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <p className={`text-2xl font-bold ${valueClass}`}>{value}</p>

@@ -1,16 +1,35 @@
-// import { createClient } from "@/lib/server";
-import DashboardPage from "./dashboard";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+import DashboardUI from "./dashboard";
 
-export default async function Dashboard() {
-  // const supabase = await createClient();
+// export const dynamic = "force-dynamic";
 
-  // // You can also use getUser() which will be slower.
-  // const { data } = await supabase.auth.getClaims();
-  // const user = data?.claims;
+export default async function DashboardPage() {
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  // if (!user) redirect("/auth/login");
+
+  const { data: expenses, error } = await supabase
+    .from('expenses')
+    .select()
+  // .order("expense_date", { ascending: false });
+
+  console.log('Expenses:', expenses);
+
+  const month = new Date().toISOString().slice(0, 7) + "-01";
+
+  const { data: budgetRow } = await supabase
+    .from("monthly_budgets")
+    .select("budget_amount")
+    .eq("month", month)
+    .single();
 
   return (
-    <div className="">
-      <DashboardPage/>
-    </div>
+    <DashboardUI
+      user={user}
+      initialExpenses={expenses ?? []}
+      initialBudget={budgetRow?.budget_amount ?? 0}
+    />
   );
 }
