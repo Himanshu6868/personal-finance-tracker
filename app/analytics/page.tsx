@@ -1,6 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import AnalyticsPage from "./analytics";
+import AnalyticsPage from "../../components/analytics";
+
+export const dynamic = "force-dynamic";
 
 export default async function Analytics() {
   const supabase = await createClient();
@@ -9,7 +11,7 @@ export default async function Analytics() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/s");
+  if (!user) redirect("/");
 
   const now = new Date();
   const currentYear = now.getFullYear();

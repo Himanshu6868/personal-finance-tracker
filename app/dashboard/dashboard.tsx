@@ -12,42 +12,43 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
-import {
-  CreateBudgetForTheMonth,
-  updateBudgetAction,
-} from "../api/budget/route";
-import { addExpense, deleteExpense } from "../api/expenses/route";
+import { CreateBudgetForTheMonth } from "../actions/budget.actions";
+
+import type { User } from "@supabase/supabase-js";
+import { updateBudgetAction } from "../actions/budget.actions";
+import { addExpense, deleteExpense } from "../actions/expenses.actions";
 import { DashboardTabs } from "./nav-tabs";
-import PaginationControls from "./pagination";
+// import PaginationControls from "./pagination";
 
-interface Expense {
-  id: string;
-  amount: number;
-  description: string;
-  expense_date: string;
-  categories?: { name: string };
-}
+// interface Expense {
+//   id: string;
+//   amount: number;
+//   description: string;
+//   expense_date: string;
+//   categories?: { name: string };
+// }
 
-interface User {
-  user_metadata: {
-    full_name: string;
-  };
-}
+// interface User {
+//   user_metadata: {
+//     full_name: string;
+//   };
+// }
 
 export default function DashboardUI({
   user,
   initialExpenses,
   initialBudget,
   categories,
-  totalCount,
-  currentPage,
+  // totalCount,
+  // currentPage,
 }: {
   user: User;
-  initialExpenses: Expense[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialExpenses: any[];
   initialBudget: number;
   categories: { id: string; name: string }[];
-  totalCount: number;
-  currentPage: number;
+  // totalCount: number;
+  // currentPage: number;
 }) {
   const [categoryId, setCategoryId] = useState("");
 
@@ -135,7 +136,7 @@ export default function DashboardUI({
             </div>
 
             {/* Pagination */}
-            <PaginationControls total={totalCount} page={currentPage} />
+            {/* <PaginationControls total={totalCount} page={currentPage} /> */}
           </CardContent>
         </Card>
 

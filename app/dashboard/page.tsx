@@ -14,13 +14,13 @@ export default async function DashboardPage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/");
 
-  const PAGE_SIZE = 10;
+  // const PAGE_SIZE = 10;
 
-  const page = Number(searchParams.page ?? 1);
-  const from = (page - 1) * PAGE_SIZE;
-  const to = from + PAGE_SIZE - 1;
+  // const page = Number(searchParams.page ?? 1);
+  // const from = (page - 1) * PAGE_SIZE;
+  // const to = from + PAGE_SIZE - 1;
 
-  const { data: expenses, count } = await supabase
+  const { data: expenses } = await supabase
     .from("expenses")
     .select(
       `
@@ -30,10 +30,11 @@ export default async function DashboardPage({
     expense_date,
     categories(name)
   `,
-      { count: "exact" },
+      // ,
+      // { count: "exact" },
     )
-    .order("expense_date", { ascending: false })
-    .range(from, to);
+    .order("expense_date", { ascending: false });
+  // .range(from, to);
 
   const { data: categories } = await supabase.from("categories").select();
 
@@ -42,16 +43,16 @@ export default async function DashboardPage({
   const { data: budgetRow } = await supabase
     .from("monthly_budgets")
     .select("budget_amount")
-    .single()
     .eq("user_id", user.id)
-    .eq("month", month);
+    .eq("month", month)
+    .single();
 
   return (
     <DashboardUI
       user={user}
       initialExpenses={expenses ?? []}
-      totalCount={count}
-      currentPage={page}
+      // totalCount={count ?? 0}
+      // currentPage={page}
       initialBudget={budgetRow?.budget_amount ?? 0}
       categories={categories ?? []}
     />

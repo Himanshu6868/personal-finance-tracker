@@ -2,6 +2,7 @@
 
 import { LogoutButton } from "@/components/logout-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { User } from "@supabase/supabase-js";
 import {
   Bar,
   BarChart,
@@ -11,14 +12,14 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { DashboardTabs } from "../dashboard/nav-tabs";
+import { DashboardTabs } from "../app/dashboard/nav-tabs";
 
 export default function AnalyticsUI({
   user,
   dailyData,
   monthlyData,
 }: {
-  user: any;
+  user: User;
   dailyData: { day: number; total: number }[];
   monthlyData: { month: string; total: number }[];
 }) {
