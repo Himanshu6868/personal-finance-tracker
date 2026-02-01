@@ -8,21 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { createClient } from "@/utils/supabase/client";
 import { useState } from "react";
 
 export default function HomeClient() {
   const [open, setOpen] = useState(false);
-  const supabase = createClient();
-
-  const handleGoogleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${location.origin}/dashboard`,
-      },
-    });
-  };
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-background">
