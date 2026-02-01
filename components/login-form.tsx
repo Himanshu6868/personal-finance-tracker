@@ -1,64 +1,19 @@
-"use client";
+import { signInAction } from "@/app/actions";
+import { FormMessage, Message } from "./form-message";
+import { SubmitButton } from "./submit-button";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { createClient } from "@/utils/supabase/client";
-import { cn } from "@/lib/utils";
-// import { redirect } from "next/navigation";
-import { useState } from "react";
-
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSocialLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const supabase = createClient();
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/dashboard`,
-        },
-      });
-
-      if (error) throw error;
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-      setIsLoading(false);
-    }
-  };
-
+export default async function Login(props: { searchParams: Promise<Message> }) {
+  const searchParams = await props.searchParams;
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Welcome!</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSocialLogin}>
-            <div className="flex flex-col gap-6">
-              {error && <p className="text-sm text-destructive-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Logging in..." : "Continue with Google"}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+    <form className="flex-1 flex flex-col min-w-64">
+      <h1 className="text-2xl font-medium">Sign in</h1>
+      <p className="text-sm text-foreground">Don&apos;t have an account? </p>
+      <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
+        <SubmitButton pendingText="Signing In..." formAction={signInAction}>
+          Sign in with Google :)
+        </SubmitButton>
+        <FormMessage message={searchParams} />
+      </div>
+    </form>
   );
 }

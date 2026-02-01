@@ -1,11 +1,19 @@
-import { LoginForm } from '@/components/login-form'
+import { signInAction } from "@/app/actions";
+import { FormMessage, Message } from "@/components/form-message";
+import { SubmitButton } from "@/components/submit-button";
 
-export default function Page() {
+export default async function Login(props: { searchParams: Message }) {
+  // const searchParams = props.searchParams;
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
-        <LoginForm />
+    <form className="flex-1 flex flex-col min-w-64">
+      <h1 className="text-2xl font-medium">Sign in</h1>
+      <p className="text-sm text-foreground">Don&apos;t have an account? </p>
+      <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
+        <SubmitButton pendingText="Signing In..." formAction={signInAction}>
+          Sign in with Google :)
+        </SubmitButton>
+        {/* <FormMessage message={searchParams} /> */}
       </div>
-    </div>
-  )
+    </form>
+  );
 }

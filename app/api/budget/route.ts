@@ -1,32 +1,64 @@
+"use server";
 import { createClient } from "@/utils/supabase/server";
-import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
-export async function GET() {
+export async function updateBudgetAction(formData: FormData) {
   const supabase = await createClient();
 
-  const month = new Date().toISOString().slice(0, 7) + "-01";
+  const budgetAmount = Number(formData.get("budget_amount"));
 
-  const { data } = await supabase
-    .from("monthly_budgets")
-    .select("budget_amount")
-    .eq("month", month)
-    .single();
+  if (!budgetAmount || budgetAmount <= 0) {
+    throw new Error("Invalid budget amount");
+  }
 
-  return NextResponse.json(data);
-}
+  console.log("Updating budget to:", budgetAmount);
 
-export async function POST(req: Request) {
-  const supabase = await createClient();
-  const { budget_amount } = await req.json();
-
+  // first day of current month (YYYY-MM-01)
   const month = new Date().toISOString().slice(0, 7) + "-01";
 
   const { error } = await supabase
     .from("monthly_budgets")
-    .upsert({ month, budget_amount });
+    .update({
+      month,
 
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
+      // user_id: (await supabase.auth.getUser()).data.user?.id,
+      budget_amount: budgetAmount,
+    })
+    .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
 
-  return NextResponse.json({ success: true });
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  // 🔑 refresh server data
+  revalidatePath("/dashboard");
+}
+
+export async function CreateBudgetForTheMonth(formData: FormData) {
+  const supabase = await createClient();
+
+  const budgetAmount = Number(formData.get("budget_amount"));
+
+  if (!budgetAmount || budgetAmount <= 0) {
+    throw new Error("Invalid budget amount");
+  }
+
+  // first day of current month (YYYY-MM-01)
+  const month = new Date().toISOString().slice(0, 7) + "-01";
+
+  const { error } = await supabase.from("monthly_budgets").insert({
+    month,
+    user_id: (await supabase.auth.getUser()).data.user?.id,
+    budget_amount: budgetAmount,
+  });
+  // .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
+
+  // console.log("Adding budget to:", budget);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  // 🔑 refresh server data
+  revalidatePath("/dashboard");
 }

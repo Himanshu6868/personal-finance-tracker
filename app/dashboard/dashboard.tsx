@@ -11,8 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
+import {
+  CreateBudgetForTheMonth,
+  updateBudgetAction,
+} from "../api/budget/route";
+import { addExpense } from "../api/expenses/route";
 import { DashboardTabs } from "./nav-tabs";
 
 interface Expense {
@@ -27,57 +31,17 @@ export default function DashboardUI({
   user,
   initialExpenses,
   initialBudget,
+  categories,
 }: {
   user: any;
   initialExpenses: Expense[];
   initialBudget: number;
+  categories: { id: string; name: string }[];
 }) {
-  const [expenses, setExpenses] = useState(initialExpenses);
-  const [budget, setBudget] = useState(initialBudget);
-
-  const [amount, setAmount] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [description, setDescription] = useState("");
-  const [budgetInput, setBudgetInput] = useState("");
 
-  const totalSpent = expenses.reduce((s, e) => s + e.amount, 0);
-  const remaining = budget - totalSpent;
-
-  // ---------- ADD EXPENSE ----------
-  const addExpense = async () => {
-    if (!amount || !categoryId) return;
-
-    await fetch("/api/expenses", {
-      method: "POST",
-      body: JSON.stringify({
-        amount: Number(amount),
-        category_id: categoryId,
-        description,
-      }),
-    });
-
-    const res = await fetch("/api/expenses");
-    setExpenses(await res.json());
-
-    setAmount("");
-    setDescription("");
-  };
-
-  // ---------- UPDATE BUDGET ----------
-  const updateBudget = async () => {
-    await fetch("/api/budget", {
-      method: "POST",
-      body: JSON.stringify({
-        budget_amount: Number(budgetInput),
-      }),
-    });
-
-    const res = await fetch("/api/budget");
-    const data = await res.json();
-    setBudget(data?.budget_amount || 0);
-
-    setBudgetInput("");
-  };
+  const totalSpent = initialExpenses.reduce((s, e) => s + e.amount, 0);
+  const remaining = initialBudget ? initialBudget - totalSpent : 0;
 
   return (
     <div className="p-6 space-y-6">
@@ -93,69 +57,120 @@ export default function DashboardUI({
       <DashboardTabs />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SummaryCard title="Monthly Budget" value={`$${budget}`} />
-        <SummaryCard title="Total Expenses" value={`$${totalSpent}`} valueClass="text-red-500" />
-        <SummaryCard title="Remaining" value={`$${remaining}`} valueClass="text-green-500" />
+        <SummaryCard title="Monthly Budget" value={`Rs. ${initialBudget}`} />
+        <SummaryCard
+          title="Total Expenses"
+          value={`Rs. ${totalSpent}`}
+          valueClass="text-red-500"
+        />
+        <SummaryCard
+          title="Remaining"
+          value={`Rs. ${remaining}`}
+          valueClass="text-green-500"
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Add Expense</CardTitle>
-          </CardHeader>
+        <form action={addExpense}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Add Expense</CardTitle>
+            </CardHeader>
 
-          <CardContent className="space-y-4">
-            <Input
-              placeholder="Amount"
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-            />
+            <CardContent className="space-y-4">
+              {/* Amount */}
+              <Input
+                name="amount"
+                placeholder="Amount"
+                type="number"
+                required
+              />
 
-            <Select onValueChange={setCategoryId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="food-id">Food</SelectItem>
-                <SelectItem value="petrol-id">Petrol</SelectItem>
-              </SelectContent>
-            </Select>
+              {/* Category Select */}
+              <input type="hidden" name="category_id" value={categoryId} />
 
-            <Input
-              placeholder="Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
+              <Select onValueChange={setCategoryId} value={categoryId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
 
-            <Button onClick={addExpense}>Add Expense</Button>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <Separator />
+              {/* Description */}
+              <Input
+                name="description"
+                placeholder="Description"
+                // value={description}
+                // onChange={(e) => setDescription(e.target.value)}
+              />
 
-            <Input
-              placeholder="Monthly Budget"
-              value={budgetInput}
-              onChange={(e) => setBudgetInput(e.target.value)}
-            />
-            <Button variant="outline" onClick={updateBudget}>
-              Update Budget
-            </Button>
-          </CardContent>
-        </Card>
+              <Button type="submit" disabled={!categoryId}>
+                Add Expense
+              </Button>
+            </CardContent>
+          </Card>
+        </form>
 
+        <form action={CreateBudgetForTheMonth}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Add Budget</CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+              <Input
+                placeholder="Monthly Budget"
+                name="budget_amount"
+                disabled={initialBudget ? true : false}
+                defaultValue={initialBudget}
+              />
+              <Button
+                variant="outline"
+                type="submit"
+                disabled={initialBudget ? true : false}
+              >
+                Add Budget
+              </Button>
+            </CardContent>
+          </Card>
+        </form>
+
+        <form action={updateBudgetAction}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Update Budget</CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+              <Input placeholder="Monthly Budget" name="budget_amount" />
+              <Button variant="outline" type="submit">
+                Update Budget
+              </Button>
+            </CardContent>
+          </Card>
+        </form>
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Recent Expenses</CardTitle>
           </CardHeader>
 
           <CardContent>
-            {expenses.length === 0 ? (
+            {initialExpenses.length === 0 ? (
               <p>No expenses yet</p>
             ) : (
-              expenses.map((e) => (
+              initialExpenses.map((e) => (
                 <div key={e.id} className="flex justify-between py-2">
-                  <span>{e.categories?.name} — {e.description}</span>
-                  <span>${e.amount}</span>
+                  <span>
+                    {e.categories?.name} — {e.description}
+                  </span>
+                  <span>Rs. {e.amount}</span>
                 </div>
               ))
             )}

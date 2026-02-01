@@ -1,47 +1,29 @@
 "use server";
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
-import { NextResponse } from "next/server";
-
-export async function FetchExpenses(): Promise<Event[]> {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-    error: userError,
-  } = await (await supabase).auth.getUser();
-
-  if (userError || !user) throw new Error("User not logged in");
-
-  const { data, error } = await (await supabase)
-    .from("expenses")
-    .select("*")
-    .order("expense_date", { ascending: false })
-    .limit(10);
-
-  if (error) {
-    throw new Error("Error fetching events: " + error.message);
-  }
-
-  return data || [];
-}
-
-export async function AddExpense(fromData: FormData): Promise<void> {
+import { revalidatePath } from "next/cache";
+export async function addExpense(formData: FormData): Promise<void> {
   const supabase = await createClient();
-  const body = Object.fromEntries(fromData);
 
-  const { amount, category_id, description } = body;
+  const amount = formData.get("amount") as string;
+  const description = formData.get("description") as string;
+  const category_id = formData.get("category_id") as string;
 
-  const { error } = await supabase.from("expenses").insert({
+  const { data, error } = await supabase.from("expenses").insert({
     amount,
-    category_id,
     description,
+    category_id,
+    user_id: (await supabase.auth.getUser()).data.user?.id,
     expense_date: new Date(),
   });
 
   if (error) {
-    throw new Error("Error creating registration: " + error.message);
+    throw new Error("Error creating event: " + error.message);
   }
 
-  redirect("/dashboard");
+  revalidatePath("/dashboard");
+  // if (error) {
+  //   return NextResponse.json({ error: error.message }, { status: 500 });
+  // }
+
+  // return NextResponse.json({ success: true });sss
 }
