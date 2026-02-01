@@ -21,7 +21,7 @@ export const signInAction = async () => {
   }
 
   if (error) {
-    return encodedRedirect("error", "/auth/login", error.message);
+    return encodedRedirect("error", "/", error.message);
   }
 
   return redirect("/dashboard");

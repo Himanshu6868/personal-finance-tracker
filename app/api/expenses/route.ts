@@ -8,7 +8,7 @@ export async function addExpense(formData: FormData): Promise<void> {
   const description = formData.get("description") as string;
   const category_id = formData.get("category_id") as string;
 
-  const { data, error } = await supabase.from("expenses").insert({
+  const { error } = await supabase.from("expenses").insert({
     amount,
     description,
     category_id,
@@ -26,4 +26,28 @@ export async function addExpense(formData: FormData): Promise<void> {
   // }
 
   // return NextResponse.json({ success: true });sss
+}
+
+export async function deleteExpense(formData: FormData) {
+  const expenseId = formData.get("expense_id") as string;
+
+  console.log("Deleting expense with ID:", expenseId);
+
+  if (!expenseId) {
+    throw new Error("Missing expense id");
+  }
+
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("expenses")
+    .delete()
+    .eq("id", expenseId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  // 🔑 refresh dashboard data
+  revalidatePath("/dashboard");
 }

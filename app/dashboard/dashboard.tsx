@@ -16,8 +16,9 @@ import {
   CreateBudgetForTheMonth,
   updateBudgetAction,
 } from "../api/budget/route";
-import { addExpense } from "../api/expenses/route";
+import { addExpense, deleteExpense } from "../api/expenses/route";
 import { DashboardTabs } from "./nav-tabs";
+import PaginationControls from "./pagination";
 
 interface Expense {
   id: string;
@@ -27,16 +28,26 @@ interface Expense {
   categories?: { name: string };
 }
 
+interface User {
+  user_metadata: {
+    full_name: string;
+  };
+}
+
 export default function DashboardUI({
   user,
   initialExpenses,
   initialBudget,
   categories,
+  totalCount,
+  currentPage,
 }: {
-  user: any;
+  user: User;
   initialExpenses: Expense[];
   initialBudget: number;
   categories: { id: string; name: string }[];
+  totalCount: number;
+  currentPage: number;
 }) {
   const [categoryId, setCategoryId] = useState("");
 
@@ -71,6 +82,63 @@ export default function DashboardUI({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>Recent Expenses</CardTitle>
+          </CardHeader>
+
+          <CardContent className="p-0">
+            {/* Scroll container */}
+            <div className="max-h-[260px] overflow-y-auto divide-y divide-border">
+              {initialExpenses.length === 0 ? (
+                <p className="py-10 text-center text-sm text-muted-foreground">
+                  No expenses yet
+                </p>
+              ) : (
+                initialExpenses.map((e) => (
+                  <div
+                    key={e.id}
+                    className="flex items-center justify-between px-4 py-3 group"
+                  >
+                    {/* Left */}
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">
+                        {e.categories?.name ?? "Uncategorized"}
+                      </span>
+                      {e.description && (
+                        <span className="text-xs text-muted-foreground">
+                          {e.description}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Right */}
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm font-semibold tabular-nums">
+                        Rs. {e.amount}
+                      </span>
+
+                      <form action={deleteExpense}>
+                        <input type="hidden" name="expense_id" value={e.id} />
+                        <button
+                          type="submit"
+                          className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground transition"
+                          aria-label="Delete expense"
+                        >
+                          ✕
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Pagination */}
+            <PaginationControls total={totalCount} page={currentPage} />
+          </CardContent>
+        </Card>
+
         <form action={addExpense}>
           <Card>
             <CardHeader>
@@ -156,26 +224,6 @@ export default function DashboardUI({
             </CardContent>
           </Card>
         </form>
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Recent Expenses</CardTitle>
-          </CardHeader>
-
-          <CardContent>
-            {initialExpenses.length === 0 ? (
-              <p>No expenses yet</p>
-            ) : (
-              initialExpenses.map((e) => (
-                <div key={e.id} className="flex justify-between py-2">
-                  <span>
-                    {e.categories?.name} — {e.description}
-                  </span>
-                  <span>Rs. {e.amount}</span>
-                </div>
-              ))
-            )}
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

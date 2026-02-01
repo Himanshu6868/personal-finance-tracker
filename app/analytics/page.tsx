@@ -9,7 +9,7 @@ export default async function Analytics() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/auth/login");
+  if (!user) redirect("/s");
 
   const now = new Date();
   const currentYear = now.getFullYear();

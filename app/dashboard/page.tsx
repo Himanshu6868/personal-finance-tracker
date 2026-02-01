@@ -2,17 +2,25 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import DashboardUI from "./dashboard";
 
-// export const dynamic = "force-dynamic";
-
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
   const supabase = await createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/auth/login");
+  if (!user) redirect("/");
 
-  const { data: expenses } = await supabase
+  const PAGE_SIZE = 10;
+
+  const page = Number(searchParams.page ?? 1);
+  const from = (page - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
+  const { data: expenses, count } = await supabase
     .from("expenses")
     .select(
       `
@@ -20,13 +28,12 @@ export default async function DashboardPage() {
     amount,
     description,
     expense_date,
-    categories (
-      id,
-      name
-    )
+    categories(name)
   `,
+      { count: "exact" },
     )
-    .order("expense_date", { ascending: false });
+    .order("expense_date", { ascending: false })
+    .range(from, to);
 
   const { data: categories } = await supabase.from("categories").select();
 
@@ -43,6 +50,8 @@ export default async function DashboardPage() {
     <DashboardUI
       user={user}
       initialExpenses={expenses ?? []}
+      totalCount={count}
+      currentPage={page}
       initialBudget={budgetRow?.budget_amount ?? 0}
       categories={categories ?? []}
     />
