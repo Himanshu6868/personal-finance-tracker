@@ -58,10 +58,15 @@ export default function DashboardUI({
   return (
     <div className="p-6 space-y-6">
       <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">FinanceTracker</h1>
+        <h1 className="text-lg sm:text-xl font-semibold">
+          FinanceTracker
+        </h1>
 
-        <div className="flex items-center gap-4">
-          Hey, {user?.user_metadata?.full_name}
+        <div className="flex items-center justify-between sm:justify-end gap-3">
+          <span className="text-sm sm:text-base truncate max-w-[180px] sm:max-w-none">
+            Hey, {user?.user_metadata?.full_name}
+          </span>
+
           <LogoutButton />
         </div>
       </header>
@@ -176,8 +181,8 @@ export default function DashboardUI({
               <Input
                 name="description"
                 placeholder="Description"
-                // value={description}
-                // onChange={(e) => setDescription(e.target.value)}
+              // value={description}
+              // onChange={(e) => setDescription(e.target.value)}
               />
 
               <Button type="submit" disabled={!categoryId}>
