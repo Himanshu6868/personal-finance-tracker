@@ -12,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { DashboardTabs } from "../app/dashboard/nav-tabs";
+import { DashboardTabs } from "./nav-tabs";
 
 export default function AnalyticsUI({
   user,

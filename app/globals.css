@@ -66,3 +66,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+.rdp {
+  --rdp-cell-size: 2rem;
+  --rdp-caption-font-size: 0.875rem;
+  --rdp-accent-color: hsl(var(--primary));
+  --rdp-background-color: hsl(var(--muted));
+}

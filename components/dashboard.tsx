@@ -4,6 +4,7 @@ import { LogoutButton } from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils"
 import {
   Select,
   SelectContent,
@@ -12,12 +13,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
-import { CreateBudgetForTheMonth } from "../actions/budget.actions";
+import { CreateBudgetForTheMonth } from "../app/actions/budget.actions";
 
 import type { User } from "@supabase/supabase-js";
-import { updateBudgetAction } from "../actions/budget.actions";
-import { addExpense, deleteExpense } from "../actions/expenses.actions";
+import { updateBudgetAction } from "../app/actions/budget.actions";
+import { addExpense, deleteExpense } from "../app/actions/expenses.actions";
 import { DashboardTabs } from "./nav-tabs";
+import AddCategoryButton from "@/components/addCategoryButton";
+// import { Calendar } from "@/components/ui/calendar"
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverTrigger,
+// } from "@/components/ui/popover"
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+
 // import PaginationControls from "./pagination";
 
 // interface Expense {
@@ -51,6 +62,12 @@ export default function DashboardUI({
   // currentPage: number;
 }) {
   const [categoryId, setCategoryId] = useState("");
+  const [date, setDate] = useState<Date>(new Date());
+
+  const addMoreExpense = async (formData: FormData) => {
+    await addExpense(formData);
+    setCategoryId("");
+  };
 
   const totalSpent = initialExpenses.reduce((s, e) => s + e.amount, 0);
   const remaining = initialBudget ? initialBudget - totalSpent : 0;
@@ -111,11 +128,20 @@ export default function DashboardUI({
                       <span className="text-sm font-medium">
                         {e.categories?.name ?? "Uncategorized"}
                       </span>
-                      {e.description && (
-                        <span className="text-xs text-muted-foreground">
-                          {e.description}
+
+                      <span>
+
+                        <span className="text-xs font-medium mr-2">
+                          {e.expense_date ?? "Uncategorized"}
                         </span>
-                      )}
+
+                        {e.description && (
+                          <span className="text-xs text-muted-foreground">
+                            {e.description}
+                          </span>
+                        )}
+
+                      </span>
                     </div>
 
                     {/* Right */}
@@ -145,7 +171,7 @@ export default function DashboardUI({
           </CardContent>
         </Card>
 
-        <form action={addExpense}>
+        <form action={addMoreExpense}>
           <Card>
             <CardHeader>
               <CardTitle>Add Expense</CardTitle>
@@ -161,7 +187,7 @@ export default function DashboardUI({
               />
 
               {/* Category Select */}
-              <input type="hidden" name="category_id" value={categoryId} />
+              <input type="hidden" name="category_id" value={categoryId} required />
 
               <Select onValueChange={setCategoryId} value={categoryId}>
                 <SelectTrigger>
@@ -174,15 +200,48 @@ export default function DashboardUI({
                       {cat.name}
                     </SelectItem>
                   ))}
+                  <AddCategoryButton />
                 </SelectContent>
+
               </Select>
 
-              {/* Description */}
+              <input
+                type="calendar"
+                name="expense_date"
+                value={date.toISOString().slice(0, 10)}
+                required
+              />
+{/* 
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal gap-2",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="h-4 w-4" />
+                    {date ? format(date, "PPP") : "Pick a date"}
+                  </Button>
+                </PopoverTrigger>
+
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    required={true}
+                    selected={date}
+                    onSelect={setDate}
+                    // initialFocus
+                    disabled={(date) => date < new Date()} // Optional: disable past dates
+                  />
+                </PopoverContent>
+              </Popover> */}
+
               <Input
                 name="description"
                 placeholder="Description"
-              // value={description}
-              // onChange={(e) => setDescription(e.target.value)}
+              // required
               />
 
               <Button type="submit" disabled={!categoryId}>
@@ -223,8 +282,8 @@ export default function DashboardUI({
             </CardHeader>
 
             <CardContent className="space-y-4">
-              <Input placeholder="Monthly Budget" name="budget_amount" />
-              <Button variant="outline" type="submit">
+              <Input placeholder="Monthly Budget" name="budget_amount" required className="bg-white" />
+              <Button variant="outline" type="submit" >
                 Update Budget
               </Button>
             </CardContent>

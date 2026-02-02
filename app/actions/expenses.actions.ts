@@ -7,13 +7,24 @@ export async function addExpense(formData: FormData): Promise<void> {
   const amount = formData.get("amount") as string;
   const description = formData.get("description") as string;
   const category_id = formData.get("category_id") as string;
+  const expense_date = formData.get("expense_date") as string;
+  
+  if (!amount || isNaN(Number(amount))) {
+    throw new Error("Invalid amount");
+  }
+
+  if (!expense_date || isNaN(Date.parse(expense_date))) {
+    throw new Error("Invalid expense date");
+  }
+
+  const parsedExpenseDate = new Date(expense_date);
 
   const { error } = await supabase.from("expenses").insert({
     amount,
     description,
     category_id,
     user_id: (await supabase.auth.getUser()).data.user?.id,
-    expense_date: new Date(),
+    expense_date: parsedExpenseDate ? parsedExpenseDate : new Date(),
   });
 
   if (error) {

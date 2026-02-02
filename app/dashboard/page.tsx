@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import DashboardUI from "./dashboard";
+import DashboardUI from "../../components/dashboard";
 
 export default async function DashboardPage({
   searchParams,
