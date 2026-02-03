@@ -7,6 +7,35 @@ export const dynamic = "force-dynamic";
 export default async function Analytics() {
   const supabase = await createClient();
 
+
+  const { data: categoryTotals, error } = await supabase
+  .from("expenses")
+  .select(`
+    amount,
+    categories (
+      name
+    )
+  `);
+
+if (error) throw new Error(error.message);
+
+// Aggregate safely
+const categoryMap: Record<string, number> = {};
+
+categoryTotals?.forEach((row:any) => {
+  const name = row.categories?.name ?? "Uncategorized";
+  categoryMap[name] = (categoryMap[name] || 0) + row.amount;
+});
+
+const categoryChartData = Object.entries(categoryMap)
+  .map(([category, total]) => ({
+    category,
+    total,
+  }))
+  .sort((a, b) => b.total - a.total);
+
+
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -68,11 +97,14 @@ export default async function Analytics() {
     monthlyData[m].total += e.amount;
   });
 
+  
+
   return (
     <AnalyticsPage
       user={user}
       dailyData={dailyData}
       monthlyData={monthlyData}
+      categoryChartData={categoryChartData}
     />
   );
 }

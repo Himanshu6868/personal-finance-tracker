@@ -13,15 +13,18 @@ import {
   YAxis,
 } from "recharts";
 import { DashboardTabs } from "./nav-tabs";
+import { CategoryChart } from "./category-chart";
 
 export default function AnalyticsUI({
   user,
   dailyData,
   monthlyData,
+  categoryChartData,
 }: {
   user: User;
   dailyData: { day: number; total: number }[];
   monthlyData: { month: string; total: number }[];
+  categoryChartData: { category: string; total: number }[];
 }) {
   return (
     <div className="p-6 space-y-6">
@@ -35,6 +38,8 @@ export default function AnalyticsUI({
 
       <DashboardTabs />
 
+      <CategoryChart data={categoryChartData} />
+
       {/* DAILY – CURRENT MONTH */}
       <Card>
         <CardHeader>
@@ -46,7 +51,13 @@ export default function AnalyticsUI({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="day" />
               <YAxis />
-              <Tooltip />
+              <Tooltip cursor={{ fill: "#fafafa" }} // off-white
+              // contentStyle={{
+              //   backgroundColor: "white",
+              //   border: "1px solid #e5e7eb",
+              //   fontSize: "12px",
+              // }} 
+              />
               <Bar dataKey="total" fill="#d4d4d4" />
             </BarChart>
           </ResponsiveContainer>
@@ -64,7 +75,9 @@ export default function AnalyticsUI({
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
-              <Tooltip />
+              <Tooltip cursor={{ fill: "#fafafa" }}
+
+              />
               <Bar dataKey="total" fill="#d4d4d4" />
             </BarChart>
           </ResponsiveContainer>
