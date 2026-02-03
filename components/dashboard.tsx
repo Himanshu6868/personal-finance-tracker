@@ -56,7 +56,7 @@ export default function DashboardUI({
     <div className="p-6 space-y-6">
       <header className="flex items-center justify-between">
         <h1 className="text-lg sm:text-xl font-semibold">
-          FinanceTracker
+          Finance Tracker
         </h1>
 
         <div className="flex items-center justify-between sm:justify-end gap-3">

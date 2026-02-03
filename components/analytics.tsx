@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import { DashboardTabs } from "./nav-tabs";
 import { CategoryChart } from "./category-chart";
+import Image from "next/image";
 
 export default function AnalyticsUI({
   user,
@@ -28,13 +29,32 @@ export default function AnalyticsUI({
 }) {
   return (
     <div className="p-6 space-y-6">
-      <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">FinanceTracker</h1>
-        <div className="flex items-center gap-4">
-          Hey, {user?.user_metadata?.full_name}
-          <LogoutButton />
-        </div>
-      </header>
+       <header className="flex items-center justify-between">
+              <h1 className="text-lg sm:text-xl font-semibold">
+                Finance Tracker
+              </h1>
+      
+              <div className="flex items-center justify-between sm:justify-end gap-3">
+                <span className="hidden sm:block text-sm sm:text-base truncate max-w-[180px]">
+                  Hey, {user?.user_metadata?.full_name}
+                </span>
+      
+                {/* Mobile: show avatar */}
+                <Image
+                  src={
+                    user?.user_metadata?.avatar_url ??
+                    "/avatar-placeholder.png"
+                  }
+                  width={32}
+                  height={32}
+                  alt="User avatar"
+                  className="sm:hidden w-8 h-8 rounded-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+      
+                <LogoutButton />
+              </div>
+            </header>
 
       <DashboardTabs />
 
