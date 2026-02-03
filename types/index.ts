@@ -27,3 +27,10 @@ export interface Budget {
   month: string; // e.g. "2026-02"
   created_at: string;
 }
+
+export type DashboardExpense = Pick<
+  Expense,
+  "id" | "amount" | "description" | "expense_date"
+> & {
+  categories?: { name: string } | { name: string }[] | null;
+};

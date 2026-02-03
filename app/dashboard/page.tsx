@@ -28,6 +28,9 @@ export default async function DashboardPage({
     amount,
     description,
     expense_date,
+    user_id,
+    category_id,
+    created_at,
     categories(name)
   `,
       // ,

@@ -19,7 +19,7 @@ import { updateBudgetAction } from "@/app/actions/budget.actions";
 import { addExpense, deleteExpense } from "@/app/actions/expenses.actions";
 import { DashboardTabs } from "@/components/nav-tabs";
 import AddCategoryButton from "@/components/add-category-button";
-import { Expense } from "@/types";
+import type { DashboardExpense } from "@/types";
 import Image from "next/image";
 
 export default function DashboardUI({
@@ -29,7 +29,7 @@ export default function DashboardUI({
   categories,
 }: {
   user: User;
-  initialExpenses: Expense[];
+  initialExpenses: DashboardExpense[];
   initialBudget: number;
   categories: { id: string; name: string }[];
 }) {
@@ -43,6 +43,14 @@ export default function DashboardUI({
 
   const totalSpent = initialExpenses.reduce((s, e) => s + e.amount, 0);
   const remaining = initialBudget ? initialBudget - totalSpent : 0;
+
+  const getCategoryName = (expense: DashboardExpense) => {
+    if (Array.isArray(expense.categories)) {
+      return expense.categories[0]?.name;
+    }
+
+    return expense.categories?.name;
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -111,7 +119,7 @@ export default function DashboardUI({
                     {/* Left */}
                     <div className="flex flex-col">
                       <span className="text-sm font-medium">
-                        {e.categories?.name ?? "Uncategorized"}
+                        {getCategoryName(e) ?? "Uncategorized"}
                       </span>
 
                       <span>
@@ -208,6 +216,7 @@ export default function DashboardUI({
               <Input
                 name="description"
                 placeholder="Description"
+                type="text"
               // required
               />
 
