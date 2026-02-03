@@ -195,23 +195,29 @@ export default function DashboardUI({
 
               </Select>
 
+              <label className="block text-sm text-gray-800">
+                Expense Date
+              </label>
+
               <input
                 type="date"
                 name="expense_date"
                 required
-                placeholder="Expense Date"
-                className="    
-                  p-1
-                  bg-[#fafafa]
+                className="
+                  p-2
+                  w-full
+                  bg-gray-200
                   text-gray-900
-                  tex-md
+                  text-sm
                   border
-                  border-gray-400
+                  border-gray-300
                   rounded-md
                   focus:outline-none
                   focus:ring-2
-                  focus:ring-gray-400"
+                  focus:ring-gray-400
+                "
               />
+
 
               <Input
                 name="description"
