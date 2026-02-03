@@ -4,7 +4,6 @@ import { LogoutButton } from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils"
 import {
   Select,
   SelectContent,
@@ -13,53 +12,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
-import { CreateBudgetForTheMonth } from "../app/actions/budget.actions";
+import { CreateBudgetForTheMonth } from "@/app/actions/budget.actions";
 
 import type { User } from "@supabase/supabase-js";
-import { updateBudgetAction } from "../app/actions/budget.actions";
-import { addExpense, deleteExpense } from "../app/actions/expenses.actions";
-import { DashboardTabs } from "./nav-tabs";
-import AddCategoryButton from "@/components/addCategoryButton";
-// import { Calendar } from "@/components/ui/calendar"
-// import {
-//   Popover,
-//   PopoverContent,
-//   PopoverTrigger,
-// } from "@/components/ui/popover"
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-
-// import PaginationControls from "./pagination";
-
-// interface Expense {
-//   id: string;
-//   amount: number;
-//   description: string;
-//   expense_date: string;
-//   categories?: { name: string };
-// }
-
-// interface User {
-//   user_metadata: {
-//     full_name: string;
-//   };
-// }
+import { updateBudgetAction } from "@/app/actions/budget.actions";
+import { addExpense, deleteExpense } from "@/app/actions/expenses.actions";
+import { DashboardTabs } from "@/components/nav-tabs";
+import AddCategoryButton from "@/components/add-category-button";
+import { Expense } from "@/types";
+import Image from "next/image";
 
 export default function DashboardUI({
   user,
   initialExpenses,
   initialBudget,
   categories,
-  // totalCount,
-  // currentPage,
 }: {
   user: User;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialExpenses: any[];
+  initialExpenses: Expense[];
   initialBudget: number;
   categories: { id: string; name: string }[];
-  // totalCount: number;
-  // currentPage: number;
 }) {
   const [categoryId, setCategoryId] = useState("");
   const [date, setDate] = useState<Date>(new Date());
@@ -80,9 +52,22 @@ export default function DashboardUI({
         </h1>
 
         <div className="flex items-center justify-between sm:justify-end gap-3">
-          <span className="text-sm sm:text-base truncate max-w-[180px] sm:max-w-none">
+          <span className="hidden sm:block text-sm sm:text-base truncate max-w-[180px]">
             Hey, {user?.user_metadata?.full_name}
           </span>
+
+          {/* Mobile: show avatar */}
+          <Image
+            src={
+              user?.user_metadata?.avatar_url ??
+              "/avatar-placeholder.png"
+            }
+            width={32}
+            height={32}
+            alt="User avatar"
+            className="sm:hidden w-8 h-8 rounded-full object-cover"
+            referrerPolicy="no-referrer"
+          />
 
           <LogoutButton />
         </div>
@@ -166,8 +151,6 @@ export default function DashboardUI({
               )}
             </div>
 
-            {/* Pagination */}
-            {/* <PaginationControls total={totalCount} page={currentPage} /> */}
           </CardContent>
         </Card>
 
@@ -178,7 +161,6 @@ export default function DashboardUI({
             </CardHeader>
 
             <CardContent className="space-y-4">
-              {/* Amount */}
               <Input
                 name="amount"
                 placeholder="Amount"
@@ -206,37 +188,22 @@ export default function DashboardUI({
               </Select>
 
               <input
-                type="calendar"
+                type="date"
                 name="expense_date"
-                value={date.toISOString().slice(0, 10)}
                 required
+                placeholder="Expense Date"
+                className="    
+                  p-1
+                  bg-[#fafafa]
+                  text-gray-900
+                  tex-md
+                  border
+                  border-gray-400
+                  rounded-md
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-gray-400"
               />
-{/* 
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal gap-2",
-                      !date && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="h-4 w-4" />
-                    {date ? format(date, "PPP") : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    required={true}
-                    selected={date}
-                    onSelect={setDate}
-                    // initialFocus
-                    disabled={(date) => date < new Date()} // Optional: disable past dates
-                  />
-                </PopoverContent>
-              </Popover> */}
 
               <Input
                 name="description"
