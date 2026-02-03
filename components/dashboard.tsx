@@ -195,8 +195,8 @@ export default function DashboardUI({
 
               </Select>
 
-              <label className="block text-sm text-gray-800">
-                Expense Date
+              <label className=" block text-sm text-gray-800">
+                <span className="sm:hidden">Click to select</span> Expense Date
               </label>
 
               <input
