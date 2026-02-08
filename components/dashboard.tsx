@@ -1,5 +1,6 @@
 "use client";
 
+import { CreateBudgetForTheMonth } from "@/app/actions/budget.actions";
 import { LogoutButton } from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,14 +13,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
-import { CreateBudgetForTheMonth } from "@/app/actions/budget.actions";
 
-import type { User } from "@supabase/supabase-js";
 import { updateBudgetAction } from "@/app/actions/budget.actions";
 import { addExpense, deleteExpense } from "@/app/actions/expenses.actions";
-import { DashboardTabs } from "@/components/nav-tabs";
 import AddCategoryButton from "@/components/add-category-button";
+import { DashboardTabs } from "@/components/nav-tabs";
 import type { DashboardExpense } from "@/types";
+import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
 
 export default function DashboardUI({
@@ -34,7 +34,6 @@ export default function DashboardUI({
   categories: { id: string; name: string }[];
 }) {
   const [categoryId, setCategoryId] = useState("");
-  const [date, setDate] = useState<Date>(new Date());
 
   const addMoreExpense = async (formData: FormData) => {
     await addExpense(formData);
@@ -55,9 +54,7 @@ export default function DashboardUI({
   return (
     <div className="p-6 space-y-6">
       <header className="flex items-center justify-between">
-        <h1 className="text-lg sm:text-xl font-semibold">
-          Finance Tracker
-        </h1>
+        <h1 className="text-lg sm:text-xl font-semibold">Finance Tracker</h1>
 
         <div className="flex items-center justify-between sm:justify-end gap-3">
           <span className="hidden sm:block text-sm sm:text-base truncate max-w-[180px]">
@@ -66,10 +63,7 @@ export default function DashboardUI({
 
           {/* Mobile: show avatar */}
           <Image
-            src={
-              user?.user_metadata?.avatar_url ??
-              "/avatar-placeholder.png"
-            }
+            src={user?.user_metadata?.avatar_url ?? "/avatar-placeholder.png"}
             width={32}
             height={32}
             alt="User avatar"
@@ -123,7 +117,6 @@ export default function DashboardUI({
                       </span>
 
                       <span>
-
                         <span className="text-xs font-medium mr-2">
                           {e.expense_date ?? "Uncategorized"}
                         </span>
@@ -133,7 +126,6 @@ export default function DashboardUI({
                             {e.description}
                           </span>
                         )}
-
                       </span>
                     </div>
 
@@ -158,7 +150,6 @@ export default function DashboardUI({
                 ))
               )}
             </div>
-
           </CardContent>
         </Card>
 
@@ -177,7 +168,12 @@ export default function DashboardUI({
               />
 
               {/* Category Select */}
-              <input type="hidden" name="category_id" value={categoryId} required />
+              <input
+                type="hidden"
+                name="category_id"
+                value={categoryId}
+                required
+              />
 
               <Select onValueChange={setCategoryId} value={categoryId}>
                 <SelectTrigger>
@@ -192,7 +188,6 @@ export default function DashboardUI({
                   ))}
                   <AddCategoryButton />
                 </SelectContent>
-
               </Select>
 
               <label className=" block text-sm text-gray-800">
@@ -218,12 +213,11 @@ export default function DashboardUI({
                 "
               />
 
-
               <Input
                 name="description"
                 placeholder="Description"
                 type="text"
-              // required
+                // required
               />
 
               <Button type="submit" disabled={!categoryId}>
@@ -264,8 +258,13 @@ export default function DashboardUI({
             </CardHeader>
 
             <CardContent className="space-y-4">
-              <Input placeholder="Monthly Budget" name="budget_amount" required className="bg-white" />
-              <Button variant="outline" type="submit" >
+              <Input
+                placeholder="Monthly Budget"
+                name="budget_amount"
+                required
+                className="bg-white"
+              />
+              <Button variant="outline" type="submit">
                 Update Budget
               </Button>
             </CardContent>
