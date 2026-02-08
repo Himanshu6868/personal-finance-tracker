@@ -44,7 +44,7 @@ export default function AddCategoryAndroidSafe() {
         autoCorrect="off"
         spellCheck={false}
         inputMode="text"
-        className="flex-1 rounded-md border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+        className="flex-1 bg-slate-300 rounded-md border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
       />
 
       <Button type="submit" disabled={isPending}>
