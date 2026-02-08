@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 
 export default function AddCategoryButton() {
   return (
-    <Dialog>
+    <Dialog modal={false}>
       <DialogTrigger asChild>
         <Button
           type="button"
@@ -26,7 +26,10 @@ export default function AddCategoryButton() {
 
       <DialogContent
         className="sm:max-w-[360px]"
-        onOpenAutoFocus={(e) => e.preventDefault()} // 👈 critical for mobile
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        onCloseAutoFocus={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
       >
         <DialogHeader>
           <DialogTitle>Add Category</DialogTitle>
