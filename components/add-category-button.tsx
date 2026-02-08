@@ -1,111 +1,54 @@
-// "use client";
-
-// import { addCategory } from "@/app/actions/category.actions";
-// import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
-// import {
-//   Sheet,
-//   SheetContent,
-//   SheetHeader,
-//   SheetTitle,
-//   SheetTrigger,
-// } from "@/components/ui/sheet";
-// import { useState, useTransition } from "react";
-
-// export default function AddCategoryButton() {
-//   const [open, setOpen] = useState(false);
-//   const [isPending, startTransition] = useTransition();
-
-//   return (
-//     <Sheet
-//       open={open}
-//       onOpenChange={(next) => {
-//         // 🚨 IGNORE auto-close attempts from Android
-//         if (!next) return;
-//         setOpen(true);
-//       }}
-//     >
-//       <SheetTrigger asChild>
-//         <Button variant="outline" className="w-full justify-start">
-//           + Add Category
-//         </Button>
-//       </SheetTrigger>
-
-//       <SheetContent
-//         side="right"
-//         className="pb-safe"
-//         onPointerDownOutside={(e) => e.preventDefault()}
-//         onInteractOutside={(e) => e.preventDefault()}
-//       >
-//         <SheetHeader className="border-b pb-4">
-//           <SheetTitle>Add Category</SheetTitle>
-//         </SheetHeader>
-
-//         <form
-//           className="space-y-4 mt-4 ml-2 mr-2"
-//           action={(formData) => {
-//             startTransition(async () => {
-//               await addCategory(formData);
-//               setOpen(false); // ✅ only WE close it
-//             });
-//           }}
-//         >
-//           <Input
-//             name="name"
-//             placeholder="Category name"
-//             required
-//             autoComplete="off"
-//             autoCorrect="off"
-//             spellCheck={false}
-//           />
-
-//           <div className="mt-auto flex">
-//             <Button type="button" variant="ghost" className="w-36">
-//               Cancel
-//             </Button>
-
-//             <Button type="submit" disabled={isPending} className="w-36">
-//               {isPending ? "Adding..." : "Add"}
-//             </Button>
-//           </div>
-//         </form>
-//       </SheetContent>
-//     </Sheet>
-//   );
-// }
-
 "use client";
 
 import { addCategory } from "@/app/actions/category.actions";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 
-export default function AddCategoryInline() {
+export default function AddCategoryAndroidSafe() {
+  const [value, setValue] = useState("");
+  const isComposing = useRef(false);
   const [isPending, startTransition] = useTransition();
 
   return (
     <form
-      action={(formData) => {
+      className="flex gap-2"
+      onSubmit={(e) => {
+        e.preventDefault();
+
+        const fd = new FormData();
+        fd.append("name", value);
+
         startTransition(async () => {
-          await addCategory(formData);
-          // optional: reset handled by browser
+          await addCategory(fd);
+          setValue("");
         });
       }}
-      className="flex gap-2 items-center"
     >
-      <Input
-        name="name"
+      <input
+        value={value}
+        onChange={(e) => {
+          if (!isComposing.current) {
+            setValue(e.target.value);
+          }
+        }}
+        onCompositionStart={() => {
+          isComposing.current = true;
+        }}
+        onCompositionEnd={(e) => {
+          isComposing.current = false;
+          setValue(e.currentTarget.value);
+        }}
         placeholder="Category name"
         required
         autoComplete="off"
         autoCorrect="off"
         spellCheck={false}
-        className="flex-1"
+        inputMode="text"
+        className="flex-1 rounded-md border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
       />
 
       <Button type="submit" disabled={isPending}>
-        {isPending ? "Adding..." : "Add"}
+        Add
       </Button>
     </form>
   );
