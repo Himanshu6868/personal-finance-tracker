@@ -2,52 +2,50 @@
 
 import { addCategory } from "@/app/actions/category.actions";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function AddCategoryButton() {
   return (
-    <Dialog modal={false}>
-      <DialogTrigger asChild>
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full px-3 py-2 text-left text-sm"
-        >
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline" className="w-full">
           Add +
         </Button>
-      </DialogTrigger>
+      </SheetTrigger>
 
-      <DialogContent
-        className="sm:max-w-[360px]"
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        onCloseAutoFocus={(e) => e.preventDefault()}
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onInteractOutside={(e) => e.preventDefault()}
-      >
-        <DialogHeader>
-          <DialogTitle>Add Category</DialogTitle>
-        </DialogHeader>
+      <SheetContent side="right" className="pb-safe">
+        <SheetHeader>
+          <SheetTitle>Add Category</SheetTitle>
+        </SheetHeader>
 
         <form
           action={async (formData) => {
             await addCategory(formData);
           }}
-          className="space-y-4"
+          className="space-y-4 mt-4 ml-2 mr-2"
         >
-          <Input name="name" placeholder="Category name" required />
-
+          <Input
+            name="name"
+            placeholder="Category name"
+            required
+            autoFocus
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck={false}
+            inputMode="text"
+          />{" "}
           <Button type="submit" className="w-full">
             Add
           </Button>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }
