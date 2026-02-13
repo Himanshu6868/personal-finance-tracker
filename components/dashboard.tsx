@@ -17,6 +17,7 @@ import { useState } from "react";
 import { updateBudgetAction } from "@/app/actions/budget.actions";
 import { addExpense, deleteExpense } from "@/app/actions/expenses.actions";
 import AddCategoryButton from "@/components/add-category-button";
+import { SubmitButton } from "@/components/submit-button";
 import { DashboardTabs } from "@/components/nav-tabs";
 import type { DashboardExpense } from "@/types";
 import type { User } from "@supabase/supabase-js";
@@ -220,9 +221,9 @@ export default function DashboardUI({
                 // required
               />
 
-              <Button type="submit" disabled={!categoryId}>
+              <SubmitButton type="submit" disabled={!categoryId} pendingText="Adding Expense...">
                 Add Expense
-              </Button>
+              </SubmitButton>
             </CardContent>
           </Card>
         </form>
