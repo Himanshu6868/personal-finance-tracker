@@ -1,5 +1,5 @@
 import { AnimatedContainer } from "@/components/ui/AnimatedContainer";
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/card";
 import clsx from "clsx";
 import type { LucideIcon } from "lucide-react";
 
