@@ -50,7 +50,7 @@ export default function AnalyticsUI({
         <DashboardTabs />
 
         <div className="grid grid-cols-12 gap-6">
-          <AnimatedContainer className="col-span-12 lg:col-span-8" delay={80}>
+          <AnimatedContainer className="col-span-12 lg:col-span-8" delay={80} hoverLift>
             <Card className="h-full">
               <div className="mb-4 flex items-center gap-2">
                 <BarChart3 className="h-5 w-5 text-indigo-500" />
@@ -64,7 +64,7 @@ export default function AnalyticsUI({
             </Card>
           </AnimatedContainer>
 
-          <AnimatedContainer className="col-span-12 lg:col-span-4" delay={140}>
+          <AnimatedContainer className="col-span-12 lg:col-span-4" delay={140} hoverLift>
             <Card className="h-full">
               <div className="mb-4 flex items-center gap-2">
                 <PieChart className="h-5 w-5 text-indigo-500" />

@@ -1,5 +1,5 @@
 import { AnimatedContainer } from "@/components/ui/AnimatedContainer";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/Card";
 import clsx from "clsx";
 import type { LucideIcon } from "lucide-react";
 
@@ -25,14 +25,14 @@ export function StatCard({
   delay = 0,
 }: StatCardProps) {
   return (
-    <AnimatedContainer delay={delay}>
-      <Card className="p-4">
+    <AnimatedContainer delay={delay} hoverLift>
+      <Card className="gap-4 p-5 transition-all hover:shadow-md">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</p>
-            <p className="mt-2 text-2xl font-bold text-slate-900 animate-in fade-in zoom-in-95 duration-500">{value}</p>
+            <p className="mt-2 text-2xl font-bold text-slate-900">{value}</p>
           </div>
-          <div className={clsx("rounded-lg p-2.5", accentClasses[accent])}>
+          <div className={clsx("rounded-xl p-2.5", accentClasses[accent])}>
             <Icon className="h-5 w-5" />
           </div>
         </div>
