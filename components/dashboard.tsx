@@ -8,7 +8,7 @@ import { LogoutButton } from "@/components/logout-button";
 import { SubmitButton } from "@/components/submit-button";
 import { AnimatedContainer } from "@/components/ui/AnimatedContainer";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/Card";
 import { InputField } from "@/components/ui/InputField";
 import { StatCard } from "@/components/ui/StatCard";
 import {

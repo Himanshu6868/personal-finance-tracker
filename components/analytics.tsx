@@ -3,7 +3,7 @@
 import { DashboardTabs } from "@/components/nav-tabs";
 import { LogoutButton } from "@/components/logout-button";
 import { AnimatedContainer } from "@/components/ui/AnimatedContainer";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/Card";
 import type { User } from "@supabase/supabase-js";
 import { BarChart3, PieChart, UserCircle2 } from "lucide-react";
 import Image from "next/image";
