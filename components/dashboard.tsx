@@ -130,7 +130,7 @@ export default function DashboardUI({
             />
           </div>
 
-          <AnimatedContainer delay={200} className="col-span-12 lg:col-span-8">
+          <AnimatedContainer delay={200} hoverLift className="col-span-12 lg:col-span-8">
             <Card className="p-0">
               <div className="border-b border-slate-100 px-5 py-4">
                 <h2 className="text-base font-semibold text-slate-900">Recent Expenses</h2>
@@ -186,7 +186,7 @@ export default function DashboardUI({
             </Card>
           </AnimatedContainer>
 
-          <AnimatedContainer delay={260} className="col-span-12 lg:col-span-4">
+          <AnimatedContainer delay={260} hoverLift className="col-span-12 lg:col-span-4">
             <form action={addMoreExpense}>
               <Card className="space-y-4">
                 <h2 className="text-base font-semibold text-slate-900">Add Expense</h2>
@@ -251,7 +251,7 @@ export default function DashboardUI({
             </form>
           </AnimatedContainer>
 
-          <AnimatedContainer delay={320} className="col-span-12 md:col-span-6">
+          <AnimatedContainer delay={320} hoverLift className="col-span-12 md:col-span-6">
             <form action={CreateBudgetForTheMonth}>
               <Card className="space-y-4">
                 <h2 className="text-base font-semibold text-slate-900">Add Budget</h2>
@@ -262,14 +262,14 @@ export default function DashboardUI({
                   defaultValue={initialBudget}
                   icon={<Wallet className="h-4 w-4" />}
                 />
-                <Button variant="outline" type="submit" disabled={Boolean(initialBudget)}>
+                <Button variant="outline" type="submit" disabled={Boolean(initialBudget)} className="w-full">
                   Add Budget
                 </Button>
               </Card>
             </form>
           </AnimatedContainer>
 
-          <AnimatedContainer delay={380} className="col-span-12 md:col-span-6">
+          <AnimatedContainer delay={380} hoverLift className="col-span-12 md:col-span-6">
             <form action={updateBudgetAction}>
               <Card className="space-y-4">
                 <h2 className="text-base font-semibold text-slate-900">Update Budget</h2>
@@ -279,7 +279,7 @@ export default function DashboardUI({
                   required
                   icon={<Wallet className="h-4 w-4" />}
                 />
-                <Button variant="secondary" type="submit">
+                <Button variant="secondary" type="submit" className="w-full">
                   Update Budget
                 </Button>
               </Card>
