@@ -1,7 +1,7 @@
 "use client";
 
 import { LogoutButton } from "@/components/logout-button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import type { User } from "@supabase/supabase-js";
 import {
   Bar,

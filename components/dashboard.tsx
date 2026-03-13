@@ -3,7 +3,7 @@
 import { CreateBudgetForTheMonth } from "@/app/actions/budget.actions";
 import { LogoutButton } from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
