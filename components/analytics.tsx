@@ -36,6 +36,12 @@ export default function AnalyticsUI({
 }) {
   const topCategories = categoryChartData.slice(0, 4);
   const pieColors = ["#6366f1", "#8b5cf6", "#ec4899", "#06b6d4", "#14b8a6", "#f59e0b"];
+  const formatCurrency = (value: unknown) => {
+    const normalized = Array.isArray(value) ? value[0] : value;
+    const numericValue = Number(normalized ?? 0);
+
+    return `₹ ${Number.isNaN(numericValue) ? 0 : numericValue.toLocaleString()}`;
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
@@ -78,11 +84,9 @@ export default function AnalyticsUI({
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis dataKey="day" tick={{ fontSize: 12 }} stroke="#64748b" />
                     <YAxis tick={{ fontSize: 12 }} stroke="#64748b" />
-                    <Tooltip
-                      formatter={(value: number) => [`₹ ${value.toLocaleString()}`, "Expense"]}
-                      labelFormatter={(day) => `Day ${day}`}
-                    />
+                    <Tooltip formatter={(value) => formatCurrency(value)} labelFormatter={(day) => `Day ${day}`} />
                     <Line
+                      name="Expense"
                       type="monotone"
                       dataKey="total"
                       stroke="#6366f1"
@@ -117,14 +121,14 @@ export default function AnalyticsUI({
                         cx="50%"
                         cy="48%"
                         outerRadius={88}
-                        label={({ category, percent }) => `${category} ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) => `${name ?? "Category"} ${((percent ?? 0) * 100).toFixed(0)}%`}
                         labelLine={false}
                       >
                         {categoryChartData.map((entry, index) => (
                           <Cell key={entry.category} fill={pieColors[index % pieColors.length]} />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(value: number) => `₹ ${value.toLocaleString()}`} />
+                      <Tooltip formatter={(value) => formatCurrency(value)} />
                       <Legend verticalAlign="bottom" height={28} wrapperStyle={{ fontSize: 12 }} />
                     </RechartsPieChart>
                   </ResponsiveContainer>
@@ -145,10 +149,8 @@ export default function AnalyticsUI({
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="#64748b" />
                     <YAxis tick={{ fontSize: 12 }} stroke="#64748b" />
-                    <Tooltip
-                      formatter={(value: number) => [`₹ ${value.toLocaleString()}`, "Monthly total"]}
-                    />
-                    <Bar dataKey="total" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
+                    <Tooltip formatter={(value) => formatCurrency(value)} />
+                    <Bar name="Monthly total" dataKey="total" fill="#8b5cf6" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
