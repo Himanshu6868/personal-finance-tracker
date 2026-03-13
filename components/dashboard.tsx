@@ -136,7 +136,7 @@ export default function DashboardUI({
                 <h2 className="text-base font-semibold text-slate-900">Recent Expenses</h2>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="max-h-[520px] overflow-auto">
                 <table className="w-full min-w-[640px] text-sm">
                   <thead>
                     <tr className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
@@ -188,7 +188,7 @@ export default function DashboardUI({
 
           <AnimatedContainer delay={260} hoverLift className="col-span-12 lg:col-span-4">
             <form action={addMoreExpense}>
-              <Card className="space-y-4">
+              <Card className="space-y-4 px-5">
                 <h2 className="text-base font-semibold text-slate-900">Add Expense</h2>
 
                 <InputField
@@ -253,7 +253,7 @@ export default function DashboardUI({
 
           <AnimatedContainer delay={320} hoverLift className="col-span-12 md:col-span-6">
             <form action={CreateBudgetForTheMonth}>
-              <Card className="space-y-4">
+              <Card className="space-y-4 px-5">
                 <h2 className="text-base font-semibold text-slate-900">Add Budget</h2>
                 <InputField
                   placeholder="Monthly Budget"
@@ -271,7 +271,7 @@ export default function DashboardUI({
 
           <AnimatedContainer delay={380} hoverLift className="col-span-12 md:col-span-6">
             <form action={updateBudgetAction}>
-              <Card className="space-y-4">
+              <Card className="space-y-4 px-5">
                 <h2 className="text-base font-semibold text-slate-900">Update Budget</h2>
                 <InputField
                   placeholder="Monthly Budget"
